@@ -1,13 +1,11 @@
-const { nanoid } = require('nanoid');
-
 const getAllChatsHandler = async (request) => {
   const { db } = request.mongo;
-  const {
-    senderId,
-    receiverId,
-    senderUserId,
-    receiverUserId,
-  } = request.query;
+  // const {
+  //   senderId,
+  //   receiverId,
+  //   senderUserId,
+  //   receiverUserId,
+  // } = request.query;
 
   // if (senderUserId || receiverUserId) {
   // return ({
@@ -208,27 +206,19 @@ const deleteChatByIdHandler = async (request, h) => {
 };
 
 // fix get all chat by sender id
-const getAllMessagesByIdHandler = (request) => {
+const getAllMessagesByIdHandler = async (request, h) => {
+  const { db } = request.mongo;
   const { senderId } = request.params;
 
-  // const data = chats.filter((chat) => chat.sender_id === senderId);
-  // const isSuccess = chats.filter((chat) => chat.sender_id === senderId).length > 0;
+  const data = await db.collection('chats').findOne({ sender_id: senderId });
+  console.log(data);
 
-  // if (isSuccess) {
-  //   return {
-  //     status: 'success',
-  //     data: {
-  //       chats: data,
-  //     },
-  //   };
-  // }
+  const response = h.response({
+    status: 'success',
+    messages: data,
+  });
 
-  // const response = h.response({
-  //   status: 'fail',
-  //   message: 'chat tidak ditemukan',
-  // });
-
-  // return response;
+  return response;
 };
 
 module.exports = {
